@@ -116,65 +116,11 @@ else:
     os.makedirs(database_dir, exist_ok=True)
     print(f"Created DATABASES_MPI directory")
 
-# Number of processors to use - change this to increase/decrease parallelism
-nproc = 8
-
-# Function to update NPROC settings in Par_file and Mesh_Par_file
-def update_processor_settings(specfem_dir, nproc):
-    """Update processor settings in Par_file and Mesh_Par_file to match nproc."""
-    # Calculate optimal NPROC_XI and NPROC_ETA values
-    if nproc == 1:
-        nproc_xi, nproc_eta = 1, 1
-    elif nproc == 4:
-        nproc_xi, nproc_eta = 2, 2  
-    elif nproc == 8:
-        nproc_xi, nproc_eta = 2, 4
-    elif nproc == 16:
-        nproc_xi, nproc_eta = 4, 4
-    else:
-        # Try to factorize into two factors close to each other
-        import math
-        nproc_xi = int(math.sqrt(nproc))
-        nproc_eta = nproc // nproc_xi
-        if nproc_xi * nproc_eta != nproc:
-            print(f"Warning: {nproc} cannot be factorized evenly. Using {nproc_xi} x {nproc_eta} = {nproc_xi * nproc_eta}")
-            nproc = nproc_xi * nproc_eta
-    
-    # Update Par_file
-    par_file_path = os.path.join(specfem_dir, "DATA", "Par_file")
-    if os.path.exists(par_file_path):
-        with open(par_file_path, 'r') as f:
-            content = f.read()
-        
-        # Replace NPROC value
-        import re
-        content = re.sub(r'NPROC\s*=\s*\d+', f'NPROC                           = {nproc}', content)
-        
-        with open(par_file_path, 'w') as f:
-            f.write(content)
-        print(f"Updated Par_file with NPROC = {nproc}")
-    
-    # Update Mesh_Par_file
-    mesh_par_file_path = os.path.join(specfem_dir, "DATA", "meshfem3D_files", "Mesh_Par_file")
-    if os.path.exists(mesh_par_file_path):
-        with open(mesh_par_file_path, 'r') as f:
-            content = f.read()
-        
-        # Replace NPROC_XI and NPROC_ETA values
-        content = re.sub(r'NPROC_XI\s*=\s*\d+', f'NPROC_XI                        = {nproc_xi}', content)
-        content = re.sub(r'NPROC_ETA\s*=\s*\d+', f'NPROC_ETA                       = {nproc_eta}', content)
-        
-        with open(mesh_par_file_path, 'w') as f:
-            f.write(content)
-        print(f"Updated Mesh_Par_file with NPROC_XI = {nproc_xi}, NPROC_ETA = {nproc_eta}")
-    
-    return nproc
+# Number of processors to use
+nproc = 4
 
 # Now follow the steps in HOWTO_run_this_example.txt
 print("\nRunning simulation as per example instructions:")
-
-# Update processor settings before running the simulation
-nproc = update_processor_settings(specfem_dir, nproc)
 
 # Step 1: Decompose the mesh
 print("Step 1: Decomposing the mesh...")
@@ -241,4 +187,4 @@ if simulation_success:
     print(f"Output directory: {seismogram_dir}")
     print("\nThe simulation has completed successfully!")
 else:
-    print("Simulation failed. Check logs for details.") 
+    print("Simulation failed. Check logs for details.")

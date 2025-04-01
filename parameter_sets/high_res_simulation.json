@@ -1,0 +1,659 @@
+{
+  "par_file": {
+    "SIMULATION_TYPE": 1,
+    "NOISE_TOMOGRAPHY": 0,
+    "SAVE_FORWARD": false,
+    "INVERSE_FWI_FULL_PROBLEM": false,
+    "UTM_PROJECTION_ZONE": 11,
+    "SUPPRESS_UTM_PROJECTION": true,
+    "NPROC": 16,
+    "NSTEP": 10000,
+    "DT": 0.025,
+    "LTS_MODE": false,
+    "PARTITIONING_TYPE": 1,
+    "USE_LDDRK": false,
+    "INCREASE_CFL_FOR_LDDRK": false,
+    "RATIO_BY_WHICH_TO_INCREASE_IT": 1.4,
+    "NGNOD": 8,
+    "MODEL": "default",
+    "TOMOGRAPHY_PATH": "./DATA/tomo_files/",
+    "SEP_MODEL_DIRECTORY": "./DATA/my_SEP_model/",
+    "APPROXIMATE_OCEAN_LOAD": false,
+    "TOPOGRAPHY": false,
+    "ATTENUATION": false,
+    "ANISOTROPY": false,
+    "GRAVITY": false,
+    "ATTENUATION_f0_REFERENCE": "0.33333d0",
+    "MIN_ATTENUATION_PERIOD": "999999998.d0",
+    "MAX_ATTENUATION_PERIOD": "999999999.d0",
+    "COMPUTE_FREQ_BAND_AUTOMATIC": true,
+    "USE_OLSEN_ATTENUATION": false,
+    "OLSEN_ATTENUATION_RATIO": 0.05,
+    "PML_CONDITIONS": false,
+    "PML_INSTEAD_OF_FREE_SURFACE": false,
+    "f0_FOR_PML": 0.05555,
+    "STACEY_ABSORBING_CONDITIONS": false,
+    "STACEY_INSTEAD_OF_FREE_SURFACE": false,
+    "BOTTOM_FREE_SURFACE": false,
+    "UNDO_ATTENUATION_AND_OR_PML": false,
+    "NT_DUMP_ATTENUATION": 500,
+    "CREATE_SHAKEMAP": false,
+    "MOVIE_SURFACE": false,
+    "MOVIE_TYPE": 1,
+    "MOVIE_VOLUME": false,
+    "SAVE_DISPLACEMENT": false,
+    "MOVIE_VOLUME_STRESS": false,
+    "USE_HIGHRES_FOR_MOVIES": false,
+    "NTSTEP_BETWEEN_FRAMES": 500,
+    "HDUR_MOVIE": 0.0,
+    "SAVE_MESH_FILES": false,
+    "LOCAL_PATH": "./OUTPUT_FILES/DATABASES_MPI",
+    "NTSTEP_BETWEEN_OUTPUT_INFO": 500,
+    "USE_SOURCES_RECEIVERS_Z": false,
+    "USE_FORCE_POINT_SOURCE": false,
+    "USE_RICKER_TIME_FUNCTION": true,
+    "USE_EXTERNAL_SOURCE_FILE": false,
+    "PRINT_SOURCE_TIME_FUNCTION": false,
+    "USE_SOURCE_ENCODING": false,
+    "NTSTEP_BETWEEN_OUTPUT_SEISMOS": 500,
+    "NTSTEP_BETWEEN_OUTPUT_SAMPLE": 1,
+    "SAVE_SEISMOGRAMS_DISPLACEMENT": true,
+    "SAVE_SEISMOGRAMS_VELOCITY": true,
+    "SAVE_SEISMOGRAMS_ACCELERATION": true,
+    "SAVE_SEISMOGRAMS_PRESSURE": false,
+    "SAVE_SEISMOGRAMS_STRAIN": false,
+    "SAVE_SEISMOGRAMS_IN_ADJOINT_RUN": false,
+    "USE_BINARY_FOR_SEISMOGRAMS": false,
+    "SU_FORMAT": false,
+    "ASDF_FORMAT": false,
+    "HDF5_FORMAT": false,
+    "WRITE_SEISMOGRAMS_BY_MAIN": true,
+    "SAVE_ALL_SEISMOS_IN_ONE_FILE": false,
+    "USE_TRICK_FOR_BETTER_PRESSURE": false,
+    "OUTPUT_ENERGY": false,
+    "NTSTEP_BETWEEN_OUTPUT_ENERGY": 10,
+    "NTSTEP_BETWEEN_READ_ADJSRC": 0,
+    "READ_ADJSRC_ASDF": false,
+    "ANISOTROPIC_KL": false,
+    "SAVE_TRANSVERSE_KL": false,
+    "ANISOTROPIC_VELOCITY_KL": false,
+    "APPROXIMATE_HESS_KL": false,
+    "SAVE_MOHO_MESH": false,
+    "COUPLE_WITH_INJECTION_TECHNIQUE": false,
+    "INJECTION_TECHNIQUE_TYPE": 3,
+    "MESH_A_CHUNK_OF_THE_EARTH": false,
+    "TRACTION_PATH": "./DATA/AxiSEM_tractions/3/",
+    "FKMODEL_FILE": "FKmodel",
+    "RECIPROCITY_AND_KH_INTEGRAL": false,
+    "NUMBER_OF_SIMULTANEOUS_RUNS": 1,
+    "BROADCAST_SAME_MESH_AND_MODEL": false,
+    "GPU_MODE": false,
+    "ADIOS_ENABLED": false,
+    "ADIOS_FOR_DATABASES": false,
+    "ADIOS_FOR_MESH": false,
+    "ADIOS_FOR_FORWARD_ARRAYS": false,
+    "ADIOS_FOR_KERNELS": false,
+    "ADIOS_FOR_UNDO_ATTENUATION": false,
+    "HDF5_ENABLED": false,
+    "HDF5_FOR_MOVIES": false,
+    "HDF5_IO_NODES": 0
+  },
+  "mesh_par_file": {
+    "LATITUDE_MIN": "0.d0",
+    "LATITUDE_MAX": "4800.d0",
+    "LONGITUDE_MIN": "0.d0",
+    "LONGITUDE_MAX": "4800.d0",
+    "DEPTH_BLOCK_KM": "4.8d0",
+    "UTM_PROJECTION_ZONE": 0,
+    "SUPPRESS_UTM_PROJECTION": true,
+    "INTERFACES_FILE": "interfaces.dat",
+    "CAVITY_FILE": "no_cavity.dat",
+    "NEX_XI": 32,
+    "NEX_ETA": 32,
+    "NPROC_XI": 4,
+    "NPROC_ETA": 4,
+    "USE_REGULAR_MESH": true,
+    "NDOUBLINGS": 0,
+    "NZ_DOUBLING_1": 0,
+    "NZ_DOUBLING_2": 0,
+    "CREATE_ABAQUS_FILES": false,
+    "CREATE_DX_FILES": false,
+    "CREATE_VTK_FILES": false,
+    "SAVE_MESH_AS_CUBIT": false,
+    "LOCAL_PATH": "./DATABASES_MPI",
+    "THICKNESS_OF_X_PML": "600.0d0",
+    "THICKNESS_OF_Y_PML": "600.0d0",
+    "THICKNESS_OF_Z_PML": "600.0d0",
+    "NMATERIALS": 4,
+    "NREGIONS": 4
+  },
+  "source": {
+    "event_name": "PDE  1999 01 01 00 00 00.00  67000 67000 -25000 4.2 4.2 homog_test",
+    "event name": "homog_test",
+    "time shift": 0.0,
+    "half duration": 5.0,
+    "latorUTM": 67000.0,
+    "longorUTM": 67000.0,
+    "depth": 30.0,
+    "Mrr": -7.6e+27,
+    "Mtt": 7.7e+27,
+    "Mpp": -2e+26,
+    "Mrt": -2.5e+28,
+    "Mrp": 4e+26,
+    "Mtp": -2.5e+27
+  },
+  "stations": [
+    {
+      "name": "ST001",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST002",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST003",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST004",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST005",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST006",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST007",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST008",
+      "network": "GE",
+      "lat": 500.0,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST009",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST010",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST011",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST012",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST013",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST014",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST015",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST016",
+      "network": "GE",
+      "lat": 642.8571428571429,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST017",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST018",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST019",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST020",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST021",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST022",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST023",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST024",
+      "network": "GE",
+      "lat": 785.7142857142858,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST025",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST026",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST027",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST028",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST029",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST030",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST031",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST032",
+      "network": "GE",
+      "lat": 928.5714285714286,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST033",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST034",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST035",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST036",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST037",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST038",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST039",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST040",
+      "network": "GE",
+      "lat": 1071.4285714285716,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST041",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST042",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST043",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST044",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST045",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST046",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST047",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST048",
+      "network": "GE",
+      "lat": 1214.2857142857142,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST049",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST050",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST051",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST052",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST053",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST054",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST055",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST056",
+      "network": "GE",
+      "lat": 1357.142857142857,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST057",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST058",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 642.8571428571429,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST059",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 785.7142857142858,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST060",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 928.5714285714286,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST061",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 1071.4285714285716,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST062",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 1214.2857142857142,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST063",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 1357.142857142857,
+      "elevation": 0.0,
+      "burial": 0.0
+    },
+    {
+      "name": "ST064",
+      "network": "GE",
+      "lat": 1500.0,
+      "lon": 1500.0,
+      "elevation": 0.0,
+      "burial": 0.0
+    }
+  ]
+}
