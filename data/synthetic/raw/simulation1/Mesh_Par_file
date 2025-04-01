@@ -1,0 +1,52 @@
+#-----------------------------------------------------------
+# Meshing input parameters
+#-----------------------------------------------------------
+LATITUDE_MIN = 0.0d0
+LATITUDE_MAX = 4.0d0
+LONGITUDE_MIN = 0.0d0
+LONGITUDE_MAX = 4.0d0
+DEPTH_BLOCK_KM = 4.0d0
+UTM_PROJECTION_ZONE = 13
+SUPPRESS_UTM_PROJECTION = .true.
+INTERFACES_FILE = interfaces.dat
+CAVITY_FILE = no_cavity.dat
+# number of elements at the surface (must be multiple of NPROC)
+NEX_XI = 80
+NEX_ETA = 80
+# number of MPI processes along each horizontal direction
+NPROC_XI = 2
+NPROC_ETA = 2
+#-----------------------------------------------------------
+# Doubling layers (none for regular mesh)
+#-----------------------------------------------------------
+USE_REGULAR_MESH = .true.
+NDOUBLINGS = 0
+#-----------------------------------------------------------
+# Visualization output
+#-----------------------------------------------------------
+CREATE_ABAQUS_FILES = .false.
+CREATE_DX_FILES = .false.
+CREATE_VTK_FILES = .true.
+LOCAL_PATH = ./DATABASES_MPI
+#-----------------------------------------------------------
+# CPML absorbing boundaries
+#-----------------------------------------------------------
+THICKNESS_OF_X_PML = 0.4d0
+THICKNESS_OF_Y_PML = 0.4d0
+THICKNESS_OF_Z_PML = 0.4d0
+#-----------------------------------------------------------
+# Domain materials
+#-----------------------------------------------------------
+NMATERIALS = 3
+# material_id   rho   vp   vs   Q_kappa   Q_mu   anisotropy_flag   domain_id
+1 2500.0 3500.0 2000.0 9999.0 9999.0 0 2
+2 2200.0 2500.0 1200.0 9999.0 9999.0 0 2
+3 2000.0 1500.0 500.0 9999.0 9999.0 0 2
+#-----------------------------------------------------------
+# Domain regions
+#-----------------------------------------------------------
+NREGIONS = 3
+# XI_begin  XI_end   ETA_begin  ETA_end   Z_begin  Z_end   material_id
+1 80 1 80 1 20 1
+1 80 1 80 21 60 2
+1 80 1 80 61 80 3

@@ -1,0 +1,39 @@
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Generated Mesh_Par_file at /home/masa/ml_interpolation/data/synthetic/raw/simulation1/Mesh_Par_file
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Regions: ['1 80 1 80 1 20 1', '1 80 1 80 21 60 2', '1 80 1 80 61 80 3']
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Generated interfaces.dat with 2 flat interfaces
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Generated Par_file at /home/masa/ml_interpolation/data/synthetic/raw/simulation1/Par_file with NPROC=4, NSTEP=4000, DT=0.0005
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Generated STATIONS file at /home/masa/ml_interpolation/data/synthetic/raw/simulation1/STATIONS with 25 stations
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Generated SOURCE file at /home/masa/ml_interpolation/data/synthetic/raw/simulation1/SOURCE with f0=10.0 Hz
+2025-03-22 23:27:28,918 - src.simulation.specfem_runner - INFO - Set up simulation simulation1 in /home/masa/ml_interpolation/data/synthetic/raw/simulation1
+2025-03-22 23:27:28,918 - __main__ - INFO - Simulation files prepared in /home/masa/ml_interpolation/data/synthetic/raw/simulation1
+2025-03-22 23:27:28,918 - __main__ - INFO - Running the SPECFEM3D simulation...
+2025-03-22 23:27:28,919 - src.simulation.specfem_runner - INFO - Running xmeshfem3D...
+2025-03-22 23:27:30,182 - src.simulation.specfem_runner - ERROR - Simulation failed: Command '['mpirun', '-np', '4', './bin/xmeshfem3D']' returned non-zero exit status 1.
+2025-03-22 23:27:30,182 - src.simulation.specfem_runner - ERROR - stdout: 
+2025-03-22 23:27:30,182 - src.simulation.specfem_runner - ERROR - stderr: STOP Error reading Par_file parameter NUMBER_OF_SIMULTANEOUS_RUNS
+--------------------------------------------------------------------------
+mpirun has exited due to process rank 0 with PID 0 on
+node masa-ubuntu22 exiting improperly. There are three reasons this could occur:
+
+1. this process did not call "init" before exiting, but others in
+the job did. This can cause a job to hang indefinitely while it waits
+for all processes to call "init". By rule, if one process calls "init",
+then ALL processes must call "init" prior to termination.
+
+2. this process called "init", but exited without calling "finalize".
+By rule, all processes that call "init" MUST call "finalize" prior to
+exiting or it will be considered an "abnormal termination"
+
+3. this process called "MPI_Abort" or "orte_abort" and the mca parameter
+orte_create_session_dirs is set to false. In this case, the run-time cannot
+detect that the abort call was an abnormal termination. Hence, the only
+error message you will receive is this one.
+
+This may have caused other processes in the application to be
+terminated by signals sent by mpirun (as reported here).
+
+You can avoid this message by specifying -quiet on the mpirun command line.
+--------------------------------------------------------------------------
+
+2025-03-22 23:27:30,182 - src.simulation.specfem_runner - INFO - Cleaning up...
+2025-03-22 23:27:30,182 - __main__ - ERROR - Simulation failed.

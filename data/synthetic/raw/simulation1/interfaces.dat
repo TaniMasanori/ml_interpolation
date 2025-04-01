@@ -1,0 +1,12 @@
+# number of interfaces
+2
+# interface 1
+.true.
+interface1.dat
+# interface 2
+.true.
+interface2.dat
+# number of spectral elements per layer (from bottom)
+20
+40
+20

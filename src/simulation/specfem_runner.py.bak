@@ -1,0 +1,445 @@
+"""
+SPECFEM3D simulation runner.
+
+This module provides utilities to set up and run SPECFEM3D simulations,
+including preparing Par_file, running the mesher, and solver.
+"""
+import os
+import subprocess
+import logging
+from pathlib import Path
+import shutil
+
+logger = logging.getLogger(__name__)
+
+class SpecfemSimulation:
+    """Class to handle SPECFEM3D simulations."""
+    
+    def __init__(self, specfem_dir, output_dir):
+        """
+        Initialize SPECFEM3D simulation handler.
+        
+        Args:
+            specfem_dir (str): Path to SPECFEM3D installation
+            output_dir (str): Path to store simulation outputs
+        """
+        # Handle relative and user paths
+        specfem_dir = os.path.abspath(os.path.expanduser(specfem_dir))
+        output_dir = os.path.abspath(os.path.expanduser(output_dir))
+        
+        # Verify SPECFEM3D installation
+        if not os.path.exists(os.path.join(specfem_dir, "bin", "xmeshfem3D")):
+            logger.warning(f"Warning: SPECFEM3D executables not found at {specfem_dir}/bin/. "
+                          "Make sure SPECFEM3D is properly installed and compiled.")
+        
+        self.specfem_dir = Path(specfem_dir)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Default value for NPROC, will be updated when Par_file is prepared
+        self.nproc = 1
+        
+    def prepare_parfile(self, par_file_template, simulation_params):
+        """
+        Prepare a Par_file for SPECFEM3D simulation.
+        
+        Args:
+            par_file_template (str): Path to Par_file template
+            simulation_params (dict): Parameters to modify in the Par_file
+            
+        Returns:
+            str: Path to the prepared Par_file
+        """
+        # Handle relative paths
+        par_file_template = os.path.abspath(os.path.expanduser(par_file_template))
+        
+        # Check if file exists
+        if not os.path.exists(par_file_template):
+            error_msg = f"Par_file template not found at {par_file_template}"
+            logger.error(error_msg)
+            raise FileNotFoundError(error_msg)
+        
+        # Read the template
+        with open(par_file_template, 'r') as f:
+            par_content = f.read()
+            
+        # Replace parameters
+        for key, value in simulation_params.items():
+            # Format: PARAMETER_NAME = value
+            pattern = f"{key} ="
+            replacement = f"{key} = {value}"
+            
+            # Check if the parameter exists in the file
+            if pattern in par_content:
+                par_content = par_content.replace(pattern, replacement)
+            else:
+                logger.warning(f"Parameter '{key}' not found in Par_file template. Skipping.")
+                print(f"Warning: Parameter '{key}' not found in Par_file template. Skipping.")
+            
+            # Store NPROC value for later use
+            if key == "NPROC":
+                try:
+                    self.nproc = int(value)
+                    print(f"Set NPROC to {self.nproc}")
+                except:
+                    print(f"Could not parse NPROC value: {value}, using default of 1")
+                    self.nproc = 1
+            
+        # Write the modified Par_file
+        output_par_file = self.output_dir / "Par_file"
+        with open(output_par_file, 'w') as f:
+            f.write(par_content)
+            
+        # Verify required mesh parameters exist in the final Par_file
+        required_params = ["NPROC", "MODEL", "NGNOD", 
+                           "LATITUDE_MIN", "LATITUDE_MAX", 
+                           "LONGITUDE_MIN", "LONGITUDE_MAX",
+                           "DEPTH_MIN", "DEPTH_MAX",
+                           "NEX_XI", "NEX_ETA", "NEX_ZETA"]
+        
+        missing_params = []
+        with open(output_par_file, 'r') as f:
+            file_content = f.read()
+            for param in required_params:
+                if f"{param} =" not in file_content:
+                    missing_params.append(param)
+        
+        if missing_params:
+            missing_list = ", ".join(missing_params)
+            logger.warning(f"Par_file is missing required parameters: {missing_list}")
+            print(f"Warning: Par_file is missing required parameters: {missing_list}")
+                    
+        logger.info(f"Prepared Par_file at {output_par_file}")
+        return str(output_par_file)
+    
+    def prepare_source(self, source_params):
+        """
+        Prepare a SOURCE file for SPECFEM3D simulation.
+        
+        Args:
+            source_params (dict): Source parameters
+            
+        Returns:
+            str: Path to the prepared SOURCE file
+        """
+        # Template for SOURCE file content
+        source_template = """
+        source_surf = {source_surf}
+        xs = {xs}
+        ys = {ys}
+        zs = {zs}
+        source_type = {source_type}
+        time_function_type = {time_function_type}
+        name_of_source_file = {name_of_source_file}
+        burst_band_width = {burst_band_width}
+        f0 = {f0}
+        tshift = {tshift}
+        anglesource = {anglesource}
+        Mxx = {Mxx}
+        Mxy = {Mxy}
+        Mxz = {Mxz}
+        Myy = {Myy}
+        Myz = {Myz}
+        Mzz = {Mzz}
+        """
+        
+        # Fill in the template with source parameters
+        source_content = source_template.format(**source_params)
+        
+        # Write the SOURCE file
+        output_source_file = self.output_dir / "SOURCE"
+        with open(output_source_file, 'w') as f:
+            f.write(source_content)
+            
+        logger.info(f"Prepared SOURCE file at {output_source_file}")
+        return str(output_source_file)
+    
+    def prepare_stations(self, stations_list):
+        """
+        Prepare a STATIONS file for receivers.
+        
+        Args:
+            stations_list (list): List of station dictionaries with name, network, lat, lon, elevation, burial
+            
+        Returns:
+            str: Path to the prepared STATIONS file
+        """
+        stations_content = ""
+        for station in stations_list:
+            # Format: STA NET LAT LON ELEVATION BURIAL
+            line = f"{station['name']} {station['network']} {station['lat']} {station['lon']} {station['elevation']} {station['burial']}\n"
+            stations_content += line
+            
+        # Write the STATIONS file
+        output_stations_file = self.output_dir / "STATIONS"
+        with open(output_stations_file, 'w') as f:
+            f.write(stations_content)
+            
+        logger.info(f"Prepared STATIONS file with {len(stations_list)} stations")
+        return str(output_stations_file)
+    
+    def run_mesher(self):
+        """
+        Run the SPECFEM3D mesher (xmeshfem3D).
+        
+        Returns:
+            bool: True if meshing completes successfully
+        """
+        # Copy necessary files to SPECFEM directory
+        shutil.copy(self.output_dir / "Par_file", self.specfem_dir / "DATA/Par_file")
+        # Also create Mesh_Par_file (copy of Par_file) which is required by the mesher
+        # The mesher in SPECFEM3D Cartesian looks for this file directly in DATA directory
+        shutil.copy(self.output_dir / "Par_file", self.specfem_dir / "DATA/Mesh_Par_file")
+        
+        # Also copy to meshfem3D_files directory as backup/alternative location
+        mesh_dir = self.specfem_dir / "DATA/meshfem3D_files"
+        os.makedirs(mesh_dir, exist_ok=True)
+        shutil.copy(self.output_dir / "Par_file", mesh_dir / "Mesh_Par_file")
+        
+        if (self.output_dir / "SOURCE").exists():
+            shutil.copy(self.output_dir / "SOURCE", self.specfem_dir / "DATA/SOURCE")
+        if (self.output_dir / "STATIONS").exists():
+            shutil.copy(self.output_dir / "STATIONS", self.specfem_dir / "DATA/STATIONS")
+            
+        # Change to SPECFEM directory and run mesher
+        cwd = os.getcwd()
+        os.chdir(self.specfem_dir)
+        
+        # Verify that the required files exist before running the mesher
+        par_file_path = self.specfem_dir / "DATA/Par_file"
+        mesh_file_path = self.specfem_dir / "DATA/Mesh_Par_file"
+        
+        logger.info(f"Verifying file existence before running mesher:")
+        logger.info(f"  Par_file exists: {par_file_path.exists()}")
+        logger.info(f"  Mesh_Par_file exists: {mesh_file_path.exists()}")
+        print(f"Verifying file existence before running mesher:")
+        print(f"  Par_file exists: {par_file_path.exists()}")
+        print(f"  Mesh_Par_file exists: {mesh_file_path.exists()}")
+        
+        try:
+            logger.info("Running xmeshfem3D...")
+            print("Running xmeshfem3D...")
+            # Use the same number of MPI processes as specified in Par_file
+            cmd = f"mpirun -np {self.nproc} ./bin/xmeshfem3D"
+                
+            print(f"Executing: {cmd}")
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            logger.info("Meshing completed successfully")
+            print("Meshing completed successfully")
+            os.chdir(cwd)
+            return True
+        except subprocess.CalledProcessError as e:
+            error_message = e.stderr.decode() if e.stderr else str(e)
+            logger.error(f"Meshing failed: {error_message}")
+            print(f"Meshing failed: {error_message}")
+            os.chdir(cwd)
+            return False
+    
+    def run_partitioner(self):
+        """
+        Run the SPECFEM3D partitioner (xdecompose_mesh).
+        
+        Returns:
+            bool: True if partitioning completes successfully
+        """
+        # Change to SPECFEM directory and run partitioner
+        cwd = os.getcwd()
+        os.chdir(self.specfem_dir)
+        
+        try:
+            logger.info("Running xdecompose_mesh...")
+            print("Running xdecompose_mesh...")
+            # Use the same number of MPI processes as specified in Par_file
+            cmd = f"mpirun -np {self.nproc} ./bin/xdecompose_mesh"
+                
+            print(f"Executing: {cmd}")
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            logger.info("Partitioning completed successfully")
+            print("Partitioning completed successfully")
+            os.chdir(cwd)
+            return True
+        except subprocess.CalledProcessError as e:
+            error_message = e.stderr.decode() if e.stderr else str(e)
+            logger.error(f"Partitioning failed: {error_message}")
+            print(f"Partitioning failed: {error_message}")
+            os.chdir(cwd)
+            return False
+    
+    def run_solver(self):
+        """
+        Run the SPECFEM3D solver (xspecfem3D).
+        
+        Returns:
+            bool: True if simulation completes successfully
+        """
+        # Change to SPECFEM directory and run solver
+        cwd = os.getcwd()
+        os.chdir(self.specfem_dir)
+        
+        try:
+            logger.info("Running xspecfem3D...")
+            print("Running xspecfem3D...")
+            # Use the same number of MPI processes as specified in Par_file
+            cmd = f"mpirun -np {self.nproc} ./bin/xspecfem3D"
+                
+            print(f"Executing: {cmd}")
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            logger.info("Simulation completed successfully")
+            print("Simulation completed successfully")
+            
+            # Copy output files to output_dir
+            output_path = self.specfem_dir / "OUTPUT_FILES"
+            if output_path.exists():
+                print(f"Copying output files from {output_path} to {self.output_dir}...")
+                file_count = 0
+                for file in output_path.glob("*"):
+                    shutil.copy(file, self.output_dir)
+                    file_count += 1
+                logger.info(f"Copied {file_count} output files to {self.output_dir}")
+                print(f"Copied {file_count} output files to {self.output_dir}")
+            else:
+                print(f"Warning: OUTPUT_FILES directory not found at {output_path}")
+            
+            os.chdir(cwd)
+            return True
+        except subprocess.CalledProcessError as e:
+            error_message = e.stderr.decode() if e.stderr else str(e)
+            logger.error(f"Simulation failed: {error_message}")
+            print(f"Simulation failed: {error_message}")
+            os.chdir(cwd)
+            return False
+    
+    def clean_previous_outputs(self):
+        """
+        Clean previous simulation outputs to avoid conflicts, especially
+        with different NPROC settings from previous runs.
+        """
+        print("Cleaning previous simulation outputs...")
+        
+        # Change to SPECFEM directory
+        cwd = os.getcwd()
+        os.chdir(self.specfem_dir)
+        
+        # Clean OUTPUT_FILES directory
+        output_path = self.specfem_dir / "OUTPUT_FILES"
+        if output_path.exists():
+            try:
+                # Define patterns of files to remove
+                patterns_to_remove = [
+                    "*.bin",        # Binary files
+                    "*.sem*",       # Seismogram files
+                    "error_*",      # Error files
+                    "timestamp*",   # Timestamp files
+                    "output_*",     # Output log files
+                    "DB.*",         # Database files
+                    "proc*",        # Processor-specific files
+                    "surface_from_mesher.h", # Mesh descriptor file
+                    "values_from_mesher.h"   # Mesh values file
+                ]
+                
+                # Remove files matching patterns
+                for pattern in patterns_to_remove:
+                    for item in output_path.glob(pattern):
+                        try:
+                            if item.is_file():
+                                item.unlink()
+                                print(f"Removed file: {item.name}")
+                            elif item.is_dir():
+                                shutil.rmtree(item)
+                                print(f"Removed directory: {item.name}")
+                        except Exception as e:
+                            print(f"Warning: Could not remove {item}: {e}")
+                
+                # Handle DATABASES_MPI directory specially
+                db_mpi_dir = output_path / "DATABASES_MPI"
+                if db_mpi_dir.exists():
+                    try:
+                        # Remove all content but keep the directory
+                        for item in db_mpi_dir.glob("*"):
+                            if item.is_file():
+                                item.unlink()
+                            elif item.is_dir():
+                                shutil.rmtree(item)
+                        print(f"Cleaned DATABASES_MPI directory")
+                    except Exception as e:
+                        print(f"Warning: Error cleaning DATABASES_MPI directory: {e}")
+                
+                print(f"Cleaned OUTPUT_FILES directory")
+            except Exception as e:
+                print(f"Warning: Error cleaning OUTPUT_FILES: {e}")
+        else:
+            # Create OUTPUT_FILES directory if it doesn't exist
+            output_path.mkdir(parents=True, exist_ok=True)
+            print(f"Created OUTPUT_FILES directory")
+            
+            # Create DATABASES_MPI directory if it doesn't exist
+            db_mpi_dir = output_path / "DATABASES_MPI"
+            db_mpi_dir.mkdir(parents=True, exist_ok=True)
+            print(f"Created DATABASES_MPI directory")
+        
+        # Also ensure the meshfem3D_files directory exists and is clean
+        mesh_dir = self.specfem_dir / "DATA/meshfem3D_files"
+        os.makedirs(mesh_dir, exist_ok=True)
+        
+        # Make sure DATA directory has the necessary files
+        data_dir = self.specfem_dir / "DATA"
+        os.makedirs(data_dir, exist_ok=True)
+        
+        # Return to original directory
+        os.chdir(cwd)
+    
+    def run_full_simulation(self, par_file_template, simulation_params, source_params=None, stations_list=None, clean_outputs=True):
+        """
+        Run a complete SPECFEM3D simulation (mesh, partition, solve).
+        
+        Args:
+            par_file_template (str): Path to Par_file template
+            simulation_params (dict): Parameters to modify in the Par_file
+            source_params (dict, optional): Source parameters
+            stations_list (list, optional): List of station dictionaries
+            clean_outputs (bool, optional): Whether to clean previous outputs before running
+            
+        Returns:
+            bool: True if simulation completes successfully
+        """
+        # Clean previous outputs if requested
+        if clean_outputs:
+            self.clean_previous_outputs()
+            
+        # Prepare input files
+        self.prepare_parfile(par_file_template, simulation_params)
+        
+        if source_params:
+            self.prepare_source(source_params)
+            
+        if stations_list:
+            self.prepare_stations(stations_list)
+        
+        # Run the mesher
+        if not self.run_mesher():
+            return False
+        
+        # Run the partitioner
+        if not self.run_partitioner():
+            return False
+        
+        # Run the solver
+        return self.run_solver()
