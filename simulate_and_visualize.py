@@ -46,45 +46,29 @@ def run_simulation(specfem_dir, parameter_set=None, nproc=None):
     """
     # Get the path to the simulation script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    simulation_script = os.path.join(script_dir, "01_specfem_simulation.py")
+    simulation_script = os.path.join(script_dir, "run_specfem.py")
     
     if not os.path.exists(simulation_script):
         print(f"Error: Simulation script not found: {simulation_script}")
         return False
     
     # Build command arguments
-    cmd = ["python", simulation_script]
+    cmd = ["python", simulation_script, "--specfem_dir", specfem_dir]
     
     # Add parameter set if specified
     if parameter_set:
-        param_manager = load_module(os.path.join(script_dir, "param_manager.py"), "param_manager")
-        # Check if parameter set exists
-        if not os.path.exists(parameter_set):
-            print(f"Error: Parameter set not found: {parameter_set}")
-            return False
-            
-        # Load parameter set
-        try:
-            with open(parameter_set, 'r') as f:
-                params = json.load(f)
-            print(f"Loaded parameter set: {parameter_set}")
-            
-            # Apply parameters using param_manager
-            param_manager.update_parameters(params)
-            print("Applied parameters from set")
-            
-            # Override nproc if specified
-            if nproc is not None:
-                param_manager.update_processor_settings(nproc)
-                print(f"Overrode processor settings to use {nproc} processors")
-        except Exception as e:
-            print(f"Error applying parameter set: {e}")
-            return False
+        cmd.extend(["--parameter_file", parameter_set])
+        print(f"Using parameter file: {parameter_set}")
+        
+        # Override nproc if specified
+        if nproc is not None:
+            cmd.extend(["--nproc", str(nproc)])
+            print(f"Overriding processor count to: {nproc}")
     
     # Run the simulation
     print(f"Running simulation with: {' '.join(cmd)}")
     try:
-        process = subprocess.Popen(cmd, cwd=specfem_dir)
+        process = subprocess.Popen(cmd)
         print(f"Simulation started with PID {process.pid}")
         print("Waiting for simulation to complete...")
         

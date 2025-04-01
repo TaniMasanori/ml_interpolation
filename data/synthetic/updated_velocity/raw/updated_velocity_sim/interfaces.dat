@@ -1,24 +1,12 @@
 # number of interfaces
-5
+2
 # interface 1
 .true.
 interface1.dat
 # interface 2
 .true.
 interface2.dat
-# interface 3
-.true.
-interface3.dat
-# interface 4
-.true.
-interface4.dat
-# interface 5
-.true.
-interface5.dat
 # number of spectral elements per layer (from bottom)
-10
-10
 20
+40
 20
-10
-10

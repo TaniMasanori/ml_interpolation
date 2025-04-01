@@ -627,6 +627,58 @@ class ParamManager:
             return True
         except ValueError:
             return False
+    
+    def update_parameters(self, params):
+        """
+        Update parameters from a dictionary loaded from a JSON file.
+        
+        Args:
+            params (dict): Dictionary containing parameters to update
+            
+        Returns:
+            bool: True if successful
+        """
+        try:
+            # Update Par_file parameters
+            if 'par_file' in params:
+                for param, value in params['par_file'].items():
+                    self.par_file_params[param] = value
+                print(f"Updated {len(params['par_file'])} Par_file parameters")
+            
+            # Update Mesh_Par_file parameters
+            if 'mesh_par_file' in params:
+                for param, value in params['mesh_par_file'].items():
+                    self.mesh_par_file_params[param] = value
+                print(f"Updated {len(params['mesh_par_file'])} Mesh_Par_file parameters")
+            
+            # Update source parameters
+            if 'source' in params:
+                for param, value in params['source'].items():
+                    self.source_params[param] = value
+                print(f"Updated {len(params['source'])} source parameters")
+            
+            # Update stations
+            if 'stations' in params:
+                self.stations = params['stations']
+                print(f"Updated stations list with {len(params['stations'])} stations")
+            
+            # Update velocity model if present
+            if 'model' in params and 'layers' in params['model']:
+                print(f"Updated velocity model with {len(params['model']['layers'])} layers")
+                
+                # Here you would apply the velocity model changes
+                # For example, you might save the velocity model to a separate file
+                # or update the corresponding parameters in the Par_file
+                
+                # Extract layer data
+                layers = params['model']['layers']
+                for i, layer in enumerate(layers):
+                    print(f"Layer {i+1}: {layer['name']}, Vp={layer['vp']}, Vs={layer['vs']}, rho={layer['rho']}")
+            
+            return True
+        except Exception as e:
+            print(f"Error updating parameters: {str(e)}")
+            return False
 
 def main():
     """Parse command line arguments and perform requested actions."""
