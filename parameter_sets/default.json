@@ -1,0 +1,141 @@
+{
+  "simulation": {
+    "model": {
+      "dimensions": {
+        "xmin": 0.0,
+        "xmax": 10000.0,
+        "ymin": 0.0,
+        "ymax": 10000.0,
+        "zmin": 0.0,
+        "zmax": 5000.0
+      },
+      "layers": [
+        {
+          "depth": 0.0,
+          "vp": 1500.0,
+          "vs": 870.0,
+          "density": 2000.0
+        },
+        {
+          "depth": 1000.0,
+          "vp": 2000.0,
+          "vs": 1155.0,
+          "density": 2200.0
+        },
+        {
+          "depth": 2000.0,
+          "vp": 2500.0, 
+          "vs": 1443.0,
+          "density": 2300.0
+        },
+        {
+          "depth": 3000.0,
+          "vp": 3000.0,
+          "vs": 1732.0,
+          "density": 2400.0
+        }
+      ],
+      "mesh": {
+        "nx": 100,
+        "ny": 100,
+        "nz": 50,
+        "elements_per_wavelength": 5
+      }
+    },
+    "source": {
+      "x": 5000.0,
+      "y": 5000.0,
+      "z": 100.0,
+      "frequency": 5.0,
+      "mechanism": "explosion",
+      "time_function": "ricker"
+    },
+    "receivers": {
+      "geophone": {
+        "x_start": 4000.0,
+        "x_end": 6000.0,
+        "y": 5000.0,
+        "z": 10.0,
+        "spacing": 20.0,
+        "component": "three_component"
+      },
+      "das_fiber": {
+        "path_type": "linear",
+        "x_start": 4000.0,
+        "x_end": 6000.0,
+        "y": 5000.0,
+        "z": 10.0,
+        "gauge_length": 10.0,
+        "spatial_sampling": 5.0
+      }
+    },
+    "time": {
+      "total_time": 5.0,
+      "dt": 0.001,
+      "seismogram_dt": 0.004
+    },
+    "output": {
+      "seismogram_format": "ASCII",
+      "save_forward": true,
+      "save_snapshots": true,
+      "snapshot_interval": 0.05
+    }
+  },
+  "conversion": {
+    "das": {
+      "gauge_length": 10.0,
+      "channels_to_convert": ["x", "y", "z"],
+      "output_format": "ascii"
+    }
+  },
+  "visualization": {
+    "shot_gather": {
+      "component": "z",
+      "normalize": true,
+      "colormap": "seismic",
+      "display_type": "wiggle",
+      "clip": 0.95
+    },
+    "wavefield": {
+      "time_steps": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
+      "component": "z",
+      "colormap": "seismic",
+      "clip": 0.95
+    }
+  },
+  "preprocessing": {
+    "window_size": 100,
+    "overlap": 50,
+    "normalization": "trace",
+    "mask_patterns": ["random", "regular", "block"],
+    "mask_ratio": 0.3,
+    "train_val_test_split": [0.7, 0.15, 0.15]
+  },
+  "model": {
+    "transformer": {
+      "embedding_dim": 256,
+      "num_heads": 8,
+      "num_layers": 6,
+      "feedforward_dim": 1024,
+      "dropout": 0.1
+    },
+    "training": {
+      "batch_size": 32,
+      "learning_rate": 0.0001,
+      "max_epochs": 100,
+      "early_stopping_patience": 10,
+      "loss_weights": {
+        "time_domain": 0.7,
+        "frequency_domain": 0.3
+      }
+    }
+  },
+  "evaluation": {
+    "metrics": ["mse", "mae", "snr", "correlation"],
+    "baseline_methods": ["linear", "cubic"],
+    "visualization": {
+      "trace_indices": [10, 20, 30, 40, 50],
+      "frequency_range": [0, 50]
+    }
+  }
+} 

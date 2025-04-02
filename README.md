@@ -1,32 +1,24 @@
-# SPECFEM3D Simulation and Visualization Toolkit
+# ML Interpolation Project
 
-A comprehensive toolkit for running SPECFEM3D simulations and generating high-quality visualizations of seismic wave propagation. This toolkit provides a streamlined workflow from parameter management to simulation execution and data visualization.
+A comprehensive toolkit for seismic data simulation, DAS fiber conversion, and machine learning-based interpolation. This project provides a streamlined workflow from parameter management to simulation execution, data processing, model training, and evaluation.
 
 ## Features
 
 ### Simulation Management
-- Run SPECFEM3D simulations with predefined parameter sets
-- Flexible processor configuration
-- Automatic parameter validation and management
-- Support for different simulation configurations (standard, high-resolution, DAS fiber)
+- Run SPECFEM3D simulations with unified parameter management
+- Convert geophone seismic data to Distributed Acoustic Sensing (DAS) measurements
+- Flexible processor configuration with automatic parameter validation
+
+### Machine Learning Components
+- Transformer-based models for interpolating missing geophone data using DAS constraints
+- Customizable masking patterns to simulate various types of missing data scenarios
+- Advanced training workflows with validation and evaluation metrics
 
 ### Visualization Capabilities
-1. **Shot Gather Plots**
-   - Display seismic wave recordings at each receiver over time
-   - Support for velocity, displacement, and acceleration data
-   - Both color and wiggle trace representations
-   - Automatic normalization and scaling options
-
-2. **Wavefield Snapshots**
-   - Generate static snapshots of wave propagation at different time points
-   - Show all three components (X, Y, Z) side by side
-   - Grid layout for easy comparison of wave states
-   - High-resolution output suitable for publication
-
-3. **Combined Workflow**
-   - Run simulation and generate visualizations in one command
-   - Automatic output organization
-   - Progress monitoring and timeout handling
+- Interactive model design and visualization through Jupyter notebooks
+- Shot gather plots with support for different data types and representations
+- Wavefield snapshots showing the evolution of wave propagation
+- Comparison visualizations between original and interpolated data
 
 ## Installation
 
@@ -36,77 +28,99 @@ git clone https://github.com/yourusername/ml_interpolation.git
 cd ml_interpolation
 ```
 
-2. Ensure you have the required Python packages:
+2. Create and activate the conda environment:
 ```bash
-pip install numpy matplotlib
+conda env create -f environment.yml
+conda activate ml_interpolation
 ```
 
-3. Make sure SPECFEM3D is installed and properly configured on your system.
+3. Ensure SPECFEM3D is installed and properly configured on your system.
+
+## Project Structure
+
+```
+ml_interpolation/
+├── workflow.py                # Main workflow orchestration script
+├── param_manager.py           # Parameter management utilities
+├── parameter_sets/            # Predefined parameter sets
+│   ├── default.json           # Default configuration
+│   └── ...
+├── src/                       # Source code modules
+│   ├── simulation/            # Simulation-related code
+│   │   ├── specfem_runner.py  # SPECFEM execution engine
+│   │   └── das_converter.py   # DAS conversion utilities
+│   ├── preprocessing/         # Data preprocessing utilities
+│   ├── models/                # ML model architectures
+│   ├── training/              # Training workflows
+│   └── evaluation/            # Evaluation metrics and tools
+├── notebooks/                 # Jupyter notebooks
+│   ├── 01_model_design_visualization.ipynb  # Interactive model design
+│   └── 05_evaluation_and_visualization.ipynb  # Results visualization
+├── plot_velocity_model.py     # Velocity model visualization
+├── plot_shot_gather.py        # Shot gather visualization
+├── plot_wavefield_snapshots.py  # Wavefield snapshot visualization
+└── convert_seismo_to_das.py   # Standalone DAS conversion tool
+```
+
+## Workflow
+
+The streamlined workflow follows these steps:
+
+1. **Parameter Configuration**: Define simulation parameters using JSON configuration files
+2. **Model Design**: Use Jupyter notebooks for interactive model design and visualization
+3. **SPECFEM Simulation**: Run seismic wave propagation simulation with SPECFEM3D
+4. **DAS Conversion**: Convert geophone data to DAS fiber strain rate measurements
+5. **Data Visualization**: Generate visualizations of simulation results
+6. **Data Preprocessing**: Prepare datasets for model training
+7. **Model Training**: Train transformer model for geophone data interpolation
+8. **Evaluation**: Assess model performance with various metrics
 
 ## Usage
 
-### Basic Usage
+### Complete Workflow
 
-Run a simulation with default parameters and generate visualizations:
+Run the entire workflow from simulation to evaluation:
+
 ```bash
-python simulate_and_visualize.py --specfem-dir ~/specfem3d --output-dir ./plots
+python workflow.py --config parameter_sets/default.json --specfem-dir /path/to/specfem3d --run-all
 ```
 
-### Using Parameter Sets
+### Individual Steps
 
-Run a simulation with a predefined parameter set:
+Run specific components of the workflow:
+
 ```bash
-python simulate_and_visualize.py --parameter-set parameter_sets/standard_simulation.json
+# Run only the simulation
+python workflow.py --config parameter_sets/default.json --specfem-dir /path/to/specfem3d --run-simulation
+
+# Convert existing simulation data to DAS
+python workflow.py --config parameter_sets/default.json --convert-das
+
+# Visualize data
+python workflow.py --config parameter_sets/default.json --visualize-data
+
+# Train the model
+python workflow.py --config parameter_sets/default.json --train-model
+
+# Evaluate model performance
+python workflow.py --config parameter_sets/default.json --evaluate-model
 ```
 
-### Customizing Visualizations
+### Interactive Model Design
 
-Generate visualizations for specific data types:
+Use the Jupyter notebook for interactive model design:
+
 ```bash
-python simulate_and_visualize.py --data-types velocity displacement acceleration
+jupyter notebook notebooks/01_model_design_visualization.ipynb
 ```
-
-### Visualization Only
-
-Generate visualizations from existing simulation results:
-```bash
-python simulate_and_visualize.py --skip-simulation --output-dir ./plots
-```
-
-## Scripts Overview
-
-### `simulate_and_visualize.py`
-Main script that orchestrates the simulation and visualization process.
-
-### `plot_shot_gather.py`
-Generates shot gather plots showing seismic wave recordings at each receiver.
-
-### `plot_wavefield_snapshots.py`
-Creates static snapshots of wave propagation at different time points.
-
-### `param_manager.py`
-Manages simulation parameters and configuration files.
-
-## Output Files
-
-The toolkit generates the following types of output files:
-
-1. **Shot Gather Plots**
-   - `shot_gather_X_velocity.png`
-   - `shot_gather_wiggle_X_velocity.png`
-   - (Similar files for Y and Z components)
-
-2. **Wavefield Snapshots**
-   - `wavefield_snapshots_velocity.png`
-   - `wavefield_snapshots_displacement.png`
 
 ## Parameter Sets
 
-Predefined parameter sets are available in the `parameter_sets` directory:
-- `standard_simulation.json`: Balanced resolution/performance
-- `high_res_simulation.json`: Higher resolution for detailed analysis
-- `fast_simulation.json`: Quick tests with lower resolution
-- `das_fiber_simulation.json`: Optimized for DAS fiber simulations
+The `parameter_sets` directory contains predefined parameter configurations:
+
+- `default.json`: Standard configuration with balanced settings
+- `high_resolution.json`: Higher resolution for detailed analysis
+- `fast_simulation.json`: Quicker simulation with lower resolution for testing
 
 ## Contributing
 
@@ -119,4 +133,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - SPECFEM3D development team for the core simulation software
+- PyTorch team for the deep learning framework
 - Contributors and users who have provided feedback and suggestions
