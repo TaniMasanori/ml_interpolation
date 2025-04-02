@@ -1,0 +1,79 @@
+# ML Interpolation Project Summary
+
+## Main Purpose
+This project provides a toolkit for seismic data simulation, processing, and machine learning-based interpolation. It focuses on using Distributed Acoustic Sensing (DAS) constraints to interpolate missing geophone seismic data with a transformer-based approach.
+
+## Key Components and Functions
+
+### Simulation Components
+- **SPECFEM3D Runner**: Manages seismic wave simulations using SPECFEM3D Cartesian
+- **Parameter Manager**: Handles simulation parameters via JSON configuration files
+- **DAS Converter**: Converts seismic data (particle velocity) to DAS (strain rate) measurements
+- **Visualization Tools**: Creates shot gathers, wiggle plots, and wavefield snapshots
+
+### Data Processing Components
+- **Dataset Preparation**: Windowing, normalization, and train/test splitting
+- **Data Loaders**: Custom PyTorch datasets for seismic data handling
+- **Masking Functions**: Tools to simulate missing channels with various patterns
+
+### ML Model Components
+- **MultimodalSeismicTransformer**: Transformer architecture with encoders for both DAS and geophone data
+- **StorSeismicBERTModel**: BERT-like model adapted for seismic time series
+- **Custom Loss Functions**: Time and frequency domain loss formulations
+- **Training Pipeline**: MLflow-tracked training with validation and checkpointing
+
+### Evaluation Components
+- **Metrics**: MSE, SNR, correlation coefficient, and frequency domain analysis 
+- **Visualization**: Comparative plots between true, baseline, and model predictions
+
+## Key Technologies and Libraries
+
+### Core Libraries
+- **PyTorch**: Deep learning framework for model implementation
+- **PyTorch Lightning**: High-level training interface
+- **NumPy/SciPy**: Scientific computing and signal processing
+- **Matplotlib/Seaborn**: Visualization
+- **MLflow**: Experiment tracking
+
+### Scientific Libraries
+- **ObsPy**: Seismic data handling
+- **SPECFEM3D**: Spectral-element method for seismic wave simulation
+
+## Workflow/Pipeline
+
+1. **Simulation Stage**:
+   - Configure simulation parameters
+   - Run SPECFEM3D simulation to generate synthetic seismic data
+   - Process simulation outputs (geophones)
+
+2. **DAS Conversion Stage**:
+   - Convert geophone velocity data to DAS strain rate measurements
+   - Visualize and analyze differences between geophone and DAS data
+   - Save processed data for model training
+
+3. **Data Preprocessing Stage**:
+   - Window data into smaller segments
+   - Normalize and standardize data
+   - Split into train/validation/test sets
+   - Implement masking patterns (random, regular, block)
+
+4. **Model Training Stage**:
+   - Configure model architecture (transformer-based)
+   - Set up training with optimizer, scheduler
+   - Train with progressive masking and loss functions
+   - Monitor and log metrics with MLflow
+
+5. **Evaluation Stage**:
+   - Compute metrics on test dataset
+   - Compare against baseline interpolation methods
+   - Visualize original vs interpolated traces
+
+## Key Features
+
+- **Simulation Management**: Streamlined SPECFEM3D workflow with parameter validation
+- **DAS Simulation**: Realistic conversion from particle velocity to fiber-optic DAS measurements
+- **Transformer Architecture**: Multi-head attention for capturing relationships between DAS and geophone data
+- **Cross-Modal Learning**: Integration of two complementary sensing modalities
+- **Progressive Masking**: Training strategy that gradually increases interpolation difficulty
+- **Comprehensive Evaluation**: Multiple metrics in both time and frequency domains
+- **Visualization Tools**: Shot gathers, wiggle plots, and comparative visualizations
